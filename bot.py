@@ -32,37 +32,43 @@ def main():
         #add user message
         messages.append({"role": "user", "content": message})
 
-        response = co.chat_stream(
-            model="command-a-03-2025",
-            messages=messages,
-            temperature=0.25,
-            max_tokens=300,
-            frequency_penalty=0.4
-        )
+        try:
+            response = co.chat_stream(
+                model="command-a-03-2025",
+                messages=messages,
+                temperature=0.25,
+                max_tokens=700,
+                frequency_penalty=0.4
+            )
 
-        bot_reply = ""
+            bot_reply = ""
 
-        print("Assistant: ", end="")
+            print("Assistant: ", end="")
 
-        for event in response:
-            if event.type == "content-delta":
-                text = event.delta.message.content.text
-                bot_reply += text
-                print(text, end="")
+            for event in response:
+                if event.type == "content-delta":
+                    text = event.delta.message.content.text
+                    bot_reply += text
+                    print(text, end="", flush=True)
 
-        print("\n")
+            print("\n")
 
-        #bot reply
-        messages.append({"role": "assistant", "content": bot_reply})
+            #bot reply to history
+            messages.append({"role": "assistant", "content": bot_reply})
+
+        except cohere.errors.BadRequestError as e:
+            print(f"\n[Error] Bad request: {e}\n")
+        except cohere.errors.UnauthorizedError:
+            print("\n[Error] Invalid API key. Check your .env file.\n")
+            break
+        except cohere.errors.TooManyRequestsError:
+            print("\n[Error] Rate limit hit. Wait a moment and try again.\n")
+        except Exception as e:
+            print(f"\n[Error] Something went wrong: {e}\n")
 
         #memory limit
         if len(messages) > 20:
             messages = [messages[0]] + messages[-19:]
-
-    #chat history
-    print("\nChat History:\n")
-    for msg in messages:
-        print(msg, "\n")
 
 
 if __name__ == "__main__":
