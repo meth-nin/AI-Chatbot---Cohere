@@ -20,7 +20,7 @@ def get_client():
     if not api_key:
         st.error("Missing Cohere API key")
         st.stop()
-    return cohere.ClientV2(api_key)
+    return cohere.Client(st.secrets["general"]["COHERE_API_KEY"])
 
 co = get_client()
 
