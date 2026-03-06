@@ -1,7 +1,17 @@
 import cohere
 import os
 from dotenv import load_dotenv
+import streamlit as st
+
 load_dotenv()
+
+st.set_page_config(
+    page_title= "Toyota AI Assistant",
+    page_icon= "🚗🤖",
+    layout= "centered",
+)
+
+
 
 def main():
     co = cohere.ClientV2(os.getenv("COHERE_API_KEY"))
