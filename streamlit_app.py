@@ -1,9 +1,6 @@
 import cohere
 import os
 import streamlit as st
-from dotenv import load_dotenv
-
-load_dotenv()
 
 st.set_page_config(
     page_title= "Toyota Car Assistant",
@@ -16,11 +13,11 @@ st.caption("Welcome to Toyota!! How can I assist you today??")
 
 @st.cache_resource
 def get_client():
-    api_key = os.getenv("COHERE_API_KEY")
+    api_key = st.secrets["COHERE_API_KEY"]
     if not api_key:
         st.error("Missing Cohere API key")
         st.stop()
-    return cohere.Client(st.secrets["general"]["COHERE_API_KEY"])
+    return cohere.ClientV2(api_key)
 
 co = get_client()
 
